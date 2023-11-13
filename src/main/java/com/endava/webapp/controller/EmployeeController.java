@@ -3,7 +3,6 @@ package com.endava.webapp.controller;
 import com.endava.webapp.dto.EmployeeDto;
 import com.endava.webapp.service.EmployeeService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,21 +32,18 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
-        EmployeeDto employee = employeeService.getEmployeeById(id);
-        return ResponseEntity.status(OK).body(employee);
+        return ResponseEntity.status(OK).body(employeeService.getEmployeeById(id));
     }
 
     @PostMapping
     public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody @Valid EmployeeDto employeeDto) {
-        EmployeeDto employee = employeeService.saveEmployee(employeeDto);
-        return ResponseEntity.status(CREATED).body(employee);
+        return ResponseEntity.status(CREATED).body(employeeService.saveEmployee(employeeDto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable Long id,
                                                       @RequestBody @Valid EmployeeDto updatedEmployee) {
-        EmployeeDto employee = employeeService.updateEmployee(id, updatedEmployee);
-        return ResponseEntity.status(OK).body(employee);
+        return ResponseEntity.status(OK).body(employeeService.updateEmployee(id, updatedEmployee));
     }
 
 }

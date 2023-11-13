@@ -1,10 +1,7 @@
 package com.endava.webapp.dto;
 
-import com.endava.webapp.model.Department;
 import com.endava.webapp.model.Employee;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -44,7 +41,7 @@ public class EmployeeDto {
     @NotBlank(message = "Phone number should not be blank")
     private String phoneNumber;
 
-    @Min(1L)
+    @Min(value = 1L, message = "Salary should not be lower than 1.0")
     private Double salary;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -58,7 +55,10 @@ public class EmployeeDto {
                 .email(employee.getEmail())
                 .phoneNumber(employee.getPhoneNumber())
                 .salary(employee.getSalary())
-                .departmentDto(Optional.ofNullable(employee.getDepartment()).map(DepartmentDto::fromDepartment).orElse(null))
+                .departmentDto(Optional.ofNullable(
+                        employee.getDepartment())
+                        .map(DepartmentDto::fromDepartment)
+                        .orElse(null))
                 .build();
     }
 }

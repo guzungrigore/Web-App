@@ -1,9 +1,6 @@
 package com.endava.webapp.dto;
 
 import com.endava.webapp.model.Department;
-import com.endava.webapp.model.Employee;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,8 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,14 +17,14 @@ public class DepartmentDto {
 
     private Long id;
 
-    @NotNull
-    @NotEmpty
-    @NotBlank
+    @NotNull(message = "Department name should not be null")
+    @NotEmpty(message = "Department name should not be empty")
+    @NotBlank(message = "Department name should not be blank")
     private String name;
 
-    @NotNull
-    @NotEmpty
-    @NotBlank
+    @NotNull(message = "Location should not be null")
+    @NotEmpty(message = "Location should not be empty")
+    @NotBlank(message = "Location should not be blank")
     private String location;
 
     public static DepartmentDto fromDepartment(Department department) {
