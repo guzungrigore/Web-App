@@ -52,7 +52,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto updateEmployee(Long id, EmployeeDto updatedEmployee) {
         Employee currentEmployee = getEmployee(id);
 
-        if(employeeDataChanged(updatedEmployee, EmployeeDto.fromEmployee(currentEmployee))) {
+        if(areEmployeeDiffernt(updatedEmployee, EmployeeDto.fromEmployee(currentEmployee))) {
             updateEmployeeData(updatedEmployee, currentEmployee);
         }
 
@@ -99,7 +99,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElse(null);
     }
 
-    private boolean employeeDataChanged(EmployeeDto updatedEmployee, EmployeeDto currentEmployeeDto) {
+    private boolean areEmployeeDiffernt(EmployeeDto updatedEmployee, EmployeeDto currentEmployeeDto) {
         currentEmployeeDto.setId(null);
         return !currentEmployeeDto.equals(updatedEmployee);
     }

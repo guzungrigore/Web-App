@@ -46,7 +46,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDto updateDepartment(Long id, DepartmentDto updatedDepartment) {
         Department currentDepartment = getDepartment(id);
 
-        if(departmentDataChanged(updatedDepartment, DepartmentDto.fromDepartment(currentDepartment))) {
+        if(areDepartmentDifferent(updatedDepartment, DepartmentDto.fromDepartment(currentDepartment))) {
             currentDepartment.setName(updatedDepartment.getName());
             currentDepartment.setLocation(updatedDepartment.getLocation());
         }
@@ -54,7 +54,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         return DepartmentDto.fromDepartment(currentDepartment);
     }
 
-    private static boolean departmentDataChanged(DepartmentDto updatedDepartment, DepartmentDto currentDepartment) {
+    private static boolean areDepartmentDifferent(DepartmentDto updatedDepartment, DepartmentDto currentDepartment) {
         currentDepartment.setId(null);
         return !currentDepartment.equals(updatedDepartment);
     }
