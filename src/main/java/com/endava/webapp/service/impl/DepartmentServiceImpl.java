@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,7 +46,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDto updateDepartment(Long id, DepartmentDto updatedDepartment) {
         Department currentDepartment = getDepartment(id);
 
-        if(notEqual(updatedDepartment, DepartmentDto.fromDepartment(currentDepartment))) {
+        if(departmentDataChanged(updatedDepartment, DepartmentDto.fromDepartment(currentDepartment))) {
             currentDepartment.setName(updatedDepartment.getName());
             currentDepartment.setLocation(updatedDepartment.getLocation());
         }
@@ -55,7 +54,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         return DepartmentDto.fromDepartment(currentDepartment);
     }
 
-    private static boolean notEqual(DepartmentDto updatedDepartment, DepartmentDto currentDepartment) {
+    private static boolean departmentDataChanged(DepartmentDto updatedDepartment, DepartmentDto currentDepartment) {
         currentDepartment.setId(null);
         return !currentDepartment.equals(updatedDepartment);
     }

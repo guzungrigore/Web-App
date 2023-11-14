@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
@@ -56,6 +57,12 @@ public class ControllerExceptionHandler {
                 .map(error -> new ValidationExceptionResponse(((FieldError) error).getField(), error.getDefaultMessage()))
                 .toList();
         return ResponseEntity.status(BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorMessage> handleRuntimeExceptions(RuntimeException ex, HttpServletRequest request) {
+        ErrorMessage error = getErrorMessage(ex.getMessage(), request);
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(error);
     }
 
     private static ErrorMessage getErrorMessage(String exceptionMessage, HttpServletRequest request) {

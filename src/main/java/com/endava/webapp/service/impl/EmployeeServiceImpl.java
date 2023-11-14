@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,21 +42,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
-        String employeeDtoEmail = employeeDto.getEmail();
-        String employeeDtoPhoneNumber = employeeDto.getPhoneNumber();
+        Employee employee = getEmployee(employeeDto);
 
-        checkEmailAvailability(employeeDtoEmail);
-        doesPhoneNumberExist(employeeDtoPhoneNumber);
-
-        return EmployeeDto.fromEmployee(employeeRepository.save(
-                    Employee.builder()
-                            .firstName(employeeDto.getFirstName())
-                            .lastName(employeeDto.getLastName())
-                            .email(employeeDtoEmail)
-                            .phoneNumber(employeeDtoPhoneNumber)
-                            .salary(employeeDto.getSalary())
-                            .department(getDepartment(employeeDto.getDepartmentDto()))
-                            .build()));
+        return EmployeeDto.fromEmployee(employeeRepository.save(employee));
     }
 
     @Override
@@ -65,19 +52,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto updateEmployee(Long id, EmployeeDto updatedEmployee) {
         Employee currentEmployee = getEmployee(id);
 
-        if(notEquals(updatedEmployee, EmployeeDto.fromEmployee(currentEmployee))) {
-            setEmployeeFields(updatedEmployee, currentEmployee);
+        if(employeeDataChanged(updatedEmployee, EmployeeDto.fromEmployee(currentEmployee))) {
+            updateEmployeeData(updatedEmployee, currentEmployee);
         }
 
         return EmployeeDto.fromEmployee(currentEmployee);
     }
 
-    private void setEmployeeFields(EmployeeDto updatedEmployee, Employee currentEmployee) {
+    private void updateEmployeeData(EmployeeDto updatedEmployee, Employee currentEmployee) {
         String updatedEmployeeEmail = updatedEmployee.getEmail();
         String updatedEmployeePhoneNumber = updatedEmployee.getPhoneNumber();
 
         checkEmailAvailability(updatedEmployeeEmail);
-        doesPhoneNumberExist(updatedEmployeePhoneNumber);
+        checkPhoneNumberAvailability(updatedEmployeePhoneNumber);
 
         currentEmployee.setFirstName(updatedEmployee.getFirstName());
         currentEmployee.setLastName(updatedEmployee.getLastName());
@@ -85,6 +72,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         currentEmployee.setPhoneNumber(updatedEmployeePhoneNumber);
         currentEmployee.setSalary(updatedEmployee.getSalary());
         currentEmployee.setDepartment(getDepartment(updatedEmployee.getDepartmentDto()));
+    }
+
+    private Employee getEmployee(EmployeeDto employeeDto) {
+        String employeeDtoEmail = employeeDto.getEmail();
+        String employeeDtoPhoneNumber = employeeDto.getPhoneNumber();
+
+        checkEmailAvailability(employeeDtoEmail);
+        checkPhoneNumberAvailability(employeeDtoPhoneNumber);
+
+        return Employee.builder()
+                .firstName(employeeDto.getFirstName())
+                .lastName(employeeDto.getLastName())
+                .email(employeeDtoEmail)
+                .phoneNumber(employeeDtoPhoneNumber)
+                .salary(employeeDto.getSalary())
+                .department(getDepartment(employeeDto.getDepartmentDto()))
+                .build();
     }
 
     private Department getDepartment(DepartmentDto departmentDto) {
@@ -95,7 +99,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElse(null);
     }
 
-    private boolean notEquals(EmployeeDto updatedEmployee, EmployeeDto currentEmployeeDto) {
+    private boolean employeeDataChanged(EmployeeDto updatedEmployee, EmployeeDto currentEmployeeDto) {
         currentEmployeeDto.setId(null);
         return !currentEmployeeDto.equals(updatedEmployee);
     }
@@ -111,7 +115,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
-    private void doesPhoneNumberExist(String phoneNumber) {
+    private void checkPhoneNumberAvailability(String phoneNumber) {
         if(employeeRepository.findByPhoneNumber(phoneNumber).isPresent()) {
             throw new PhoneNumberAlreadyExistsException("Phone number: " + phoneNumber + " already exists");
         }

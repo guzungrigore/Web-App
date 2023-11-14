@@ -55,8 +55,7 @@ public class EmployeeDto {
                 .email(employee.getEmail())
                 .phoneNumber(employee.getPhoneNumber())
                 .salary(employee.getSalary())
-                .departmentDto(Optional.ofNullable(
-                        employee.getDepartment())
+                .departmentDto(Optional.ofNullable(employee.getDepartment())
                         .map(DepartmentDto::fromDepartment)
                         .orElse(null))
                 .build();
